@@ -24,10 +24,11 @@ Before running the playbook, ensure you have the following installed and configu
    ```bash
    git clone git@github.com:alijarai12/Ansible-Task.git
 
+2. Run the playbook
+   ```bash
+   ansible-playbook -i aws_ec2.yml playbook.yml
 
-2. Run the playbook:
- ```bash
-    ansible-playbook -i aws_ec2.yml playbook.yml
+
 
 
 ## Screenshot of Running EC2 Instance
