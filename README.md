@@ -30,7 +30,7 @@ Before running the playbook, ensure you have the following installed and configu
     ansible-playbook -i aws_ec2.yml playbook.yml
 
 
-### Screenshot of Running EC2 Instance
+## Screenshot of Running EC2 Instance
 
 Screenshot of Ansible Playbook:
 ![Playbook](image/playbook1.png)
