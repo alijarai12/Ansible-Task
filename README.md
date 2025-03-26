@@ -33,24 +33,24 @@ Before running the playbook, ensure you have the following installed and configu
 ### Screenshot of Running EC2 Instance
 
 Screenshot of Ansible Playbook:
-![Playbook](image/playbook1.png)
+![Playbook](./image/playbook1.png)
 ![Playbook](image/playbook2.png)
 
 Screenshot of EC2 Instance:
-![EC2 Instance](image/ec2.png)
+![EC2 Instance](./image/ec2.png)
 
 Screenshot of SSH SSH Access:
-![ssh into EC2 Instance](image/ssh-to-ec2.png)
+![ssh into EC2 Instance](./image/ssh-to-ec2.png)
 
 
 Screenshot of Webpage:
-![Page](image/nginx.png)
+![Nginx Page](./image/nginx.png)
 
 Screenshot of SSL Certificate (HTTPS):
-![SSL Certificate](image/ssl.png)
+![SSL Certificate](./image/ssl.png)
 
 Screenshot of Cloudflare DNS API:
-![Page](image/nginx.cloudfare-token.png)
+![Page](./image/nginx.cloudfare-token.png)
 
 Screenshot of Cloudflare DNS Record:
-![Page](image/nginx.dns-record.png)
+![DNS Record](./image/nginx.dns-record.png)
