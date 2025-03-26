@@ -41,9 +41,13 @@ Before running the playbook, ensure you have the following installed and configu
 
 ![EC2 Instance](image/ec2.png)
 
-## Screenshot of SSH SSH Access:
+## Screenshot of SSH Access:
 
 ![ssh into EC2 Instance](image/ssh-to-ec2.png)
+
+## Screenshot of Security-Group Added:
+
+![Security-Group](image/sg.png)
 
 
 ## Screenshot of Webpage:
