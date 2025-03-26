@@ -1,0 +1,16 @@
+---
+- name: Provision EC2 Instance and setup SSL
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  roles:
+    - ec2_provision
+    - cloudflare_dns 
+
+- name: Configure Web Server
+  hosts: webservers
+  become: yes
+  gather_facts: yes
+  roles:
+    - web_setup
+    - ssl_setup

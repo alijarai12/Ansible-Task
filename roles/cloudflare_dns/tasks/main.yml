@@ -1,0 +1,13 @@
+---
+- name: Update Cloudflare DNS record for the domain
+  community.general.cloudflare_dns:
+    account_email: alijarai414@gmail.com
+    api_token: "{{ cloudflare_api_key }}" 
+    zone: "alija-rai.com.np" 
+    record: "ansible-task"
+    type: "A"
+    value: "{{ ec2_instance.instances[0].public_ip_address }}"  # Corrected this line
+
+    proxied: false
+    state: "present"
+

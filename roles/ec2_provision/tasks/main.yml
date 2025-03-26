@@ -1,0 +1,130 @@
+---
+- name: Provision an EC2 instance
+  amazon.aws.ec2_instance:
+    key_name: task1
+    region: us-east-1
+    instance_type: t2.micro
+    image_id: ami-0f9de6e2d2f067fca  # Ubuntu AMI
+    wait: yes
+    count: 1
+    tags:
+      Name: "MyAnsibleInstance"
+    network_interfaces:
+      - assign_public_ip: true
+        device_index: 0
+        groups: 
+          - sg-0e3fd0e71fbd48d04
+    state: running
+  register: ec2_instance
+  tags:
+    - ec2_provision
+
+- name: Set fact for EC2 public IP
+  set_fact:
+    ec2_public_ip: "{{ ec2_instance.instances[0].public_ip_address }}"
+  tags:
+    - ec2_provision
+
+
+- name: Debug EC2 Instance Information
+  debug:
+    var: ec2_instance
+  tags:
+    - ec2_provision
+
+- name: Wait for instance to be fully initialized
+  amazon.aws.ec2_instance_info:
+    instance_ids: "{{ ec2_instance.instances[0].instance_id }}"
+    region: us-east-1
+  register: instance_status
+  until: instance_status.instances[0].state.name == 'running'
+  retries: 20
+  delay: 4
+  tags:
+    - ec2_provision
+
+- name: Prepare SSH connection
+  block:
+    - name: Ensure SSH key has correct permissions
+      file:
+        path: "{{ ssh_private_key_path }}"
+        mode: '0600'  # Read/write for owner only
+      delegate_to: localhost
+  tags:
+    - ec2_provision
+
+- name: Add new EC2 instance to dynamic inventory
+  ansible.builtin.add_host:
+    name: "{{ ec2_instance.instances[0].public_ip_address }}"
+    groups: webservers
+    ansible_user: ubuntu
+    ansible_ssh_private_key_file: "{{ ssh_private_key_path }}"
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+
+
+- name: Wait for SSH to be available
+  ansible.builtin.wait_for:
+    host: "{{ ec2_instance.instances[0].public_ip_address }}"
+    port: 22
+    delay: 4
+    timeout: 600
+  tags:
+    - ec2_provision
+
+- name: Verify SSH connectivity
+  ansible.builtin.command:
+    cmd: >
+      ssh -o StrictHostKeyChecking=no 
+          -o UserKnownHostsFile=/dev/null 
+          -i "{{ ssh_private_key_path }}" 
+          ubuntu@{{ ec2_instance.instances[0].public_ip_address }} 
+          "echo 'SSH connection successful'"
+  register: ssh_test
+  failed_when: ssh_test.rc != 0
+  tags:
+    - ec2_provision
+
+- name: Configure SSH access
+  block:
+    - name: Create .ssh directory on EC2 instance
+      ansible.builtin.command:
+        cmd: >
+          ssh -o StrictHostKeyChecking=no 
+              -o UserKnownHostsFile=/dev/null 
+              -i "{{ ssh_private_key_path }}" 
+              ubuntu@{{ ec2_instance.instances[0].public_ip_address }} 
+              "mkdir -p ~/.ssh && chmod 700 ~/.ssh"
+      delegate_to: localhost
+
+    - name: Copy local public key to EC2 instance
+      ansible.builtin.command:
+        cmd: >
+          scp -o StrictHostKeyChecking=no 
+              -o UserKnownHostsFile=/dev/null 
+              -i "{{ ssh_private_key_path }}" 
+              {{ lookup('env', 'HOME') }}/.ssh/id_rsa.pub 
+              ubuntu@{{ ec2_instance.instances[0].public_ip_address }}:~/.ssh/authorized_keys
+      delegate_to: localhost
+
+    - name: Set permissions for authorized_keys
+      ansible.builtin.command:
+        cmd: >
+          ssh -o StrictHostKeyChecking=no 
+              -o UserKnownHostsFile=/dev/null 
+              -i "{{ ssh_private_key_path }}" 
+              ubuntu@{{ ec2_instance.instances[0].public_ip_address }} 
+              "chmod 600 ~/.ssh/authorized_keys"
+      delegate_to: localhost
+  tags:
+    - ec2_provision
+
+- name: Add new EC2 instance to host group
+  ansible.builtin.add_host:
+    name: "{{ ec2_instance.instances[0].public_ip_address }}"
+    groups: webservers
+    ansible_user: ubuntu
+    ansible_ssh_private_key_file: "{{ ssh_private_key_path }}"
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+  tags:
+    - ec2_provision
+

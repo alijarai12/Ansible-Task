@@ -1,0 +1,41 @@
+---
+- name: Update system packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Create directories for website pages
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /var/www/task1
+    - /var/www/task2
+
+- name: Generate Page1
+  template:
+    src: page1.html.j2
+    dest: /var/www/task1/index.html
+
+- name: Generate Page2
+  template:
+    src: page2.html.j2
+    dest: /var/www/task2/index.html
+
+- name: Configure nginx
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-available/ansible-task.alija-rai.com.np.conf
+  notify: Restart nginx  # Triggers handler in handlers/main.yml
+
+- name: Enable the new Nginx configuration
+  file:
+    src: /etc/nginx/sites-available/ansible-task.alija-rai.com.np.conf
+    dest: /etc/nginx/sites-enabled/ansible-task.alija-rai.com.np.conf
+    state: link
+

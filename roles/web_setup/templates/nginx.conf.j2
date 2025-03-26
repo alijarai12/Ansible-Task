@@ -1,0 +1,22 @@
+server {
+    listen 80;
+    server_name {{ domain_name }};
+    
+    location / {
+        root /var/www/task1;
+        index index.html;
+    }
+
+    location /page1/ {
+        alias /var/www/task1/;
+        index index.html;
+    }
+
+    location /page2/ {
+        alias /var/www/task2/;
+        index index.html;
+    }
+
+}
+
+    

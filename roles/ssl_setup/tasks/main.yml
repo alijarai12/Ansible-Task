@@ -1,0 +1,47 @@
+---
+- name: Install and Configure SSL for Nginx
+  apt:
+    name:
+      - nginx
+      - openssl
+      - certbot
+      - python3-certbot-nginx
+    state: present
+    update_cache: yes
+
+- name: Ensure Nginx is running before requesting SSL
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Configure Nginx for SSL and HTTPS
+  template:
+    src: "/home/alija/ansible_task/roles/web_setup/templates/nginx.conf.j2"  # Specify the full path here
+    dest: "{{ nginx_config_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable the site by linking to sites-enabled
+  file:
+    src: "{{ nginx_config_path }}"
+    dest: "/etc/nginx/sites-enabled/{{ domain_name }}.conf"
+    state: link
+
+- name: Obtain SSL certificates using Certbot (Let's Encrypt)
+  command:
+    cmd: certbot --nginx -d "{{ domain_name }}" --non-interactive --agree-tos --email "{{ email }}"
+    creates: "/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
+
+- name: Test Nginx configuration for syntax errors
+  command: nginx -t
+  register: nginx_test
+  failed_when: "'failed' in nginx_test.stderr"
+  changed_when: false
+
+- name: Reload Nginx to apply SSL changes
+  service:
+    name: nginx
+    state: reloaded
+

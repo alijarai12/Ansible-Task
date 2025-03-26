@@ -1,0 +1,5 @@
+ssh_private_key_path: "/home/alija/Downloads/task1.pem"
+domain_name: "ansible-task.alija-rai.com.np"
+email: "pusparai783@gmail.com"
+cloudflare_api_key: "ZXf1jOLLXzZ6tmpPiz0XwpEA5onN8d-ZYN2io48Q"
+nginx_config_path: "/etc/nginx/sites-available/{{ domain_name }}.conf"

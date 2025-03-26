@@ -1,0 +1,19 @@
+ansible-task/
+├── ansible.cfg                    # Configuration file for Ansible
+├── aws_ec2.yml                    # Playbook for provisioning EC2 instance
+├── playbook.yml                   # Main playbook that includes all tasks
+├── group_vars/all.yml             # Variables for the group of hosts
+├── roles/
+│   ├── ec2_provision/             # Role for EC2 instance provisioning
+│   │   ├── tasks/main.yml         # Main tasks for EC2 provisioning
+│   ├── cloudflare_dns/            # Role for Cloudflare DNS management
+│   │   ├── tasks/main.yml         # Main tasks for Cloudflare DNS setup
+│   ├── web_setup/                 # Role for nginx and website setup
+│   │   ├── handlers/main.yml     # Handlers for web setup
+│   │   ├── tasks/main.yml         # Main tasks for nginx setup
+│   │   ├── templates/nginx.conf.j2 # Template for nginx configuration
+│   │   ├── templates/page1.html.j2 # Template for page1
+│   │   ├── templates/page2.html.j2 # Template for page2
+│   ├── ssl_setup/                 # Role for SSL certificate generation
+│   │   ├── tasks/main.yml         # Main tasks for SSL setup
+
