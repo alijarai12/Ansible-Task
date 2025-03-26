@@ -11,3 +11,30 @@ Before running the playbook, ensure you have the following installed and configu
    ```bash
    ansible-galaxy collection install amazon.aws
    ansible-galaxy collection install cloudflare.cloudflare
+
+3. AWS CLI Configuration
+Ensure your AWS CLI is configured with your AWS credentials and region for EC2 provisioning. Run the following command to configure:
+   ```bash
+   aws configure
+
+
+## Instructions for Usage
+
+1. Clone the repository:
+   ```bash
+   git clone git@github.com:alijarai12/Ansible-Task.git
+
+
+2. Run the playbook:
+ ```bash
+    ansible-playbook -i aws_ec2.yml playbook.yml
+
+
+
+
+
+
+
+
+
+
